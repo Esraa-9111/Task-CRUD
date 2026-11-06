@@ -7,4 +7,4 @@ app = FastAPI()
 
 @app.get("/")
 async def root():
-    return {"hello server"}
+    return {"Name" : "TaskAPI", "Version" : "1.0", "Endpoints" : ["/task"]}
