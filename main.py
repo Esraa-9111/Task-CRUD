@@ -4,6 +4,9 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
+class TaskCreate(BaseModel):
+    title : str | None = None
+
 task_objects = [
     { "id" : 1 , "title" : "surat al-kahf" , "done" : False},
     { "id" : 2 , "title" : "clean room" , "done" : False },
@@ -52,9 +55,16 @@ async def add_task(task : TaskCreate):
                
 
 @app.put("/tasks/{id}")
-async def update_task(id: int, title: str, done: bool | None = None):
+async def update_task(id: int, title: str|None= None, done: bool | None = None):
     for task in task_objects:
         if task["id"] == id:
-           if title is None or 
+           if title is None or not title.strip():
+               raise HTTPException(status_code=400, detail= "Envalid/Empty Bady") 
+           else:
+               task["title"] = title
+               if done is not None:
+                   task["done"] = done
+               return task
+
     raise HTTPException(status_code=404, detail= f"item {id} not found")       
  
