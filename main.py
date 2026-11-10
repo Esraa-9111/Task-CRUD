@@ -13,6 +13,7 @@ task_objects = [
     { "id" : 3 , "title" : "eat breakfast" , "done" : True}
 ]
 
+
 @app.get("/")
 async def root():
     return { "name" : "Task API" , "version" : 1.0 , "endpoints" : ["/tasks"] }
@@ -41,18 +42,7 @@ async def add_task(task : TaskCreate):
         new_task = {"id" : new_id, "title" : task.title, "done" : False}
         task_objects.append(new_task)
     return new_task
-
-# @app.put("/tasks/{id}")
-# async def update_task(id: int, title: str, done: bool | None =None):
-#     for task in task_objects:
-#        if task["id"] == id:
-#            if title.strip() == "" or None or not str:
-#                raise HTTPException(status_code=400, detail= "Envalid/Empty Body")
-#            task["title"] = title
-#            if done == True or False:
-#                task["done"] = done
-#        raise HTTPException(status_code=404, detail= f"item {id} not found")       
-               
+              
 
 @app.put("/tasks/{id}")
 async def update_task(id: int, title: str|None= None, done: bool | None = None):
@@ -65,6 +55,13 @@ async def update_task(id: int, title: str|None= None, done: bool | None = None):
                if done is not None:
                    task["done"] = done
                return task
+    raise HTTPException(status_code=404, detail= f"item {id} not found")      
 
-    raise HTTPException(status_code=404, detail= f"item {id} not found")       
- 
+
+@app.delete("/task/{id}", status_code=204)
+async def delete_task(id: int):
+    for task in task_objects:
+        if task['id'] == id:
+            task_objects.remove(task)
+            return task
+        raise HTTPException(status_code=404, detail= f"task {id} is not found")
