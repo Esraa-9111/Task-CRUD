@@ -27,5 +27,34 @@ async def tasks_id(id : int):
     for task in task_objects:
         if task["id"] == id:
             return task
-    raise HTTPException(status_code=404, detail= f"item {id} not found")
-    
+    raise HTTPException(status_code=404, detail = f"item {id} not found")
+
+@app.post("/tasks", status_code=201)
+async def add_task(task : TaskCreate):
+    if task.title is None or not task.title.strip():
+         raise HTTPException(status_code=400, detail = "Bad Request" )
+    else:
+        new_id = max((object["id"] for object in task_objects), default=0) + 1
+        new_task = {"id" : new_id, "title" : task.title, "done" : False}
+        task_objects.append(new_task)
+    return new_task
+
+# @app.put("/tasks/{id}")
+# async def update_task(id: int, title: str, done: bool | None =None):
+#     for task in task_objects:
+#        if task["id"] == id:
+#            if title.strip() == "" or None or not str:
+#                raise HTTPException(status_code=400, detail= "Envalid/Empty Body")
+#            task["title"] = title
+#            if done == True or False:
+#                task["done"] = done
+#        raise HTTPException(status_code=404, detail= f"item {id} not found")       
+               
+
+@app.put("/tasks/{id}")
+async def update_task(id: int, title: str, done: bool | None = None):
+    for task in task_objects:
+        if task["id"] == id:
+           if title is None or 
+    raise HTTPException(status_code=404, detail= f"item {id} not found")       
+ 
