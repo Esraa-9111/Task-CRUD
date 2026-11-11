@@ -1,4 +1,3 @@
-import sqlalchemy
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
@@ -6,6 +5,7 @@ app = FastAPI()
 
 class TaskCreate(BaseModel):
     title : str | None = None
+
 
 task_objects = [
     { "id" : 1 , "title" : "surat al-kahf" , "done" : False},
