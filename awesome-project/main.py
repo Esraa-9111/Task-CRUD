@@ -35,7 +35,7 @@ async def tasks_id(id : int):
 @app.post("/tasks", status_code=201)
 async def add_task(task : TaskCreate):
     if task.title is None or not task.title.strip():
-         raise HTTPException(status_code=400, detail = "Bad Request" )
+         raise HTTPException(status_code=400, detail = "Title cannot be empty" )
     else:
         new_id = max((object["id"] for object in task_objects), default=0) + 1
         new_task = {"id" : new_id, "title" : task.title, "done" : False}
