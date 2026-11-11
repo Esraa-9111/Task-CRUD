@@ -6,7 +6,6 @@ app = FastAPI()
 class TaskCreate(BaseModel):
     title : str | None = None
 
-
 task_objects = [
     { "id" : 1 , "title" : "surat al-kahf" , "done" : False},
     { "id" : 2 , "title" : "clean room" , "done" : False },
