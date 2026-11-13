@@ -11,16 +11,20 @@ engine = create_engine(sqlite_url, echo=True)
 def create_db_and_tables():  
     SQLModel.metadata.create_all(engine) 
 
-def create_tasks():
+def create_tasks(titlex :str | None = None, donex:bool|None=None):
     task_1=Tasks(title="read azkar")
     task_2=Tasks(title="salah")
     task_3=Tasks(title="prepare a healthy meal")
 
     with Session(engine) as session:
-        session.add(task_1)
-        session.add(task_2)
-        session.add(task_3) 
-
+        if titlex is None:
+            session.add(task_1)
+            session.add(task_2)
+            session.add(task_3) 
+        else:
+            taskx= Tasks(title= titlex, done= donex)
+            session.add(taskx)
+            
         session.commit()
         
 def count_rows():
