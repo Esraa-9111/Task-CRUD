@@ -1,7 +1,13 @@
+import connect_with_db
+from connect_with_db import count_rows
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 app = FastAPI()
+
+cr= count_rows
+db = connect_with_db
+db.count_rows()
 
 class TaskCreate(BaseModel):
     title : str | None = None
@@ -11,7 +17,6 @@ task_objects = [
     { "id" : 2 , "title" : "clean room" , "done" : False },
     { "id" : 3 , "title" : "eat breakfast" , "done" : True}
 ]
-
 
 @app.get("/")
 async def root():
@@ -23,13 +28,13 @@ async def health():
 
 @app.get("/tasks")
 async def task():
-    return task_objects
+    return db.list_tasks()
 
 @app.get("/tasks/{id}")
 async def tasks_id(id : int):
-    for task in task_objects:
-        if task["id"] == id:
-            return task
+    for task in db.list_tasks():
+        if task.id == id:
+            return db.list_tasks(id)
     raise HTTPException(status_code=404, detail = f"item {id} not found")
 
 @app.post("/tasks", status_code=201)
