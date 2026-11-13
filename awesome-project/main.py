@@ -43,7 +43,7 @@ async def add_task(task : TaskCreate, done :bool |None= None):
          raise HTTPException(status_code=400, detail = "Title cannot be empty" )
     else:
         return db.create_tasks(task.title, done)
-              
+            
 
 @app.put("/tasks/{id}")
 async def update_task(id: int, title: str|None= None, done: bool | None = None):
