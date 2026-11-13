@@ -29,7 +29,6 @@ def create_tasks(titlex :str | None = None, donex:bool|None=None):
             task = session.get(Tasks, taskx.id)
             return task
         
-
 def count_rows():
     with Session(engine) as session:
         statement= select(Tasks)
@@ -47,4 +46,24 @@ def list_tasks(id : int | None = None):
         if id is None:
             objects = session.exec(select(Tasks))
             return (objects.all())
-        
+
+def update_tasks(id:int,title:str|None=None, done:bool|None=None):
+    with Session(engine) as session:
+        statement= select(Tasks).where(Tasks.id == id)
+        result = session.exec(statement)
+        task=result.one()
+        if title or done is not None:
+            task.title = title
+            task.done = done
+            session.add(task)
+            session.commit()
+            session.refresh(task)
+            return task
+
+def delete_tasks(id:int):
+    with Session(engine) as session:
+        statement=select(Tasks).where(Tasks.id==id)
+        result=session.exec(statement)
+        task=result.one()
+        session.delete(task)
+        session.commit() 

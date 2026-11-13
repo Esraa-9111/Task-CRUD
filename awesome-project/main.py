@@ -47,22 +47,18 @@ async def add_task(task : TaskCreate, done :bool |None= None):
 
 @app.put("/tasks/{id}")
 async def update_task(id: int, title: str|None= None, done: bool | None = None):
-    for task in task_objects:
-        if task["id"] == id:
+    for task in db.list_tasks():
+        if task.id == id:
            if title is None or not title.strip():
                raise HTTPException(status_code=400, detail= "Envalid/Empty Bady") 
            else:
-               task["title"] = title
-               if done is not None:
-                   task["done"] = done
-               return task
+               return db.update_tasks(id,title,done)
     raise HTTPException(status_code=404, detail= f"item {id} not found")      
 
 
 @app.delete("/task/{id}", status_code=204)
 async def delete_task(id: int):
-    for task in task_objects:
-        if task['id'] == id:
-            task_objects.remove(task)
-            return task
-        raise HTTPException(status_code=404, detail= f"task {id} is not found")
+    for task in db.list_tasks():
+        if task.id == id:
+            db.delete_tasks(id)
+    raise HTTPException(status_code=404, detail= f"task {id} is not found")
