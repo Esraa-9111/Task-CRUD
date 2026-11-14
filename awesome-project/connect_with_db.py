@@ -12,9 +12,9 @@ def create_db_and_tables():
     SQLModel.metadata.create_all(engine) 
 
 def create_tasks(titlex :str | None = None, donex:bool|None=None):
-    task_1=Tasks(title="read azkar")
-    task_2=Tasks(title="salah")
-    task_3=Tasks(title="prepare a healthy meal")
+    task_1=Tasks(title="untitled 1")
+    task_2=Tasks(title="untitled 2")
+    task_3=Tasks(title="untitled 3")
 
     with Session(engine) as session:
         if titlex is None:

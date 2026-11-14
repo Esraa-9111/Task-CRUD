@@ -1,3 +1,4 @@
+import os
 import connect_with_db
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -5,6 +6,10 @@ from pydantic import BaseModel
 app = FastAPI()
 
 db = connect_with_db
+
+if not os.path.exists("tasks.db"):
+    db.create_db_and_tables()
+    db.count_rows()
 db.count_rows()
 
 class TaskCreate(BaseModel):
