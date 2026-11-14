@@ -1,11 +1,9 @@
 import connect_with_db
-from connect_with_db import count_rows
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 app = FastAPI()
 
-cr= count_rows
 db = connect_with_db
 db.count_rows()
 
