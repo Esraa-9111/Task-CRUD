@@ -49,13 +49,12 @@ async def add_task(task : TaskCreate, done :bool |None= None):
             
 
 @app.put("/tasks/{id}")
-async def update_task(id: int, title: str|None= None, done: bool | None = None):
+async def update_task(id: int, title: str|None = None, done: bool | None = None):
     for task in db.list_tasks():
         if task.id == id:
-           if title is None or not title.strip():
-               raise HTTPException(status_code=400, detail= "Envalid/Empty Bady") 
-           else:
+           if title is not None or done is not None:
                return db.update_tasks(id,title,done)
+           raise HTTPException(status_code=400, detail= "At least one of 'title' or 'done' must be provided")
     raise HTTPException(status_code=404, detail= f"item {id} not found")      
 
 

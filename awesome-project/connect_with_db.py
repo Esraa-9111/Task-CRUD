@@ -52,13 +52,17 @@ def update_tasks(id:int,title:str|None=None, done:bool|None=None):
         statement= select(Tasks).where(Tasks.id == id)
         result = session.exec(statement)
         task=result.one()
-        if title or done is not None:
+        if title is not None:
             task.title = title
+        if done is not None:
             task.done = done
-            session.add(task)
-            session.commit()
-            session.refresh(task)
-            return task
+            
+        session.add(task)
+        session.commit()
+        session.refresh(task)
+        return task
+        
+
 
 def delete_tasks(id:int):
     with Session(engine) as session:
