@@ -1,63 +1,69 @@
-# Tasks API
+# Task API
 
-A simple REST API for managing a to-do list, built with **FastAPI** and **SQLite** (via SQLModel). Tasks are stored in a single database file that both the API and any SQLite browser can read directly.
+A small task-tracker API built with **FastAPI** + **SQLModel**, containerized with **Docker Compose**.
 
-## Why SQLite?
+## Quickstart
 
-- **Single file** — the entire database is one `tasks.db` file on disk, no server process to install or manage.
-- **Zero setup** — the file is created automatically on first run, so the project works out of the box after cloning.
-- **Survives restarts** — data is persisted to disk, so your tasks are still there after stopping or restarting the API.
-
-## Where the database file lives
-
-- The database is `tasks.db`, located in the project root (same folder as `main.py`).
-- It is **created automatically** the first time the app runs (`SQLModel.metadata.create_all`), and a few starter tasks are seeded if the table is empty.
-<img width="810" height="171" alt="image" src="https://github.com/user-attachments/assets/ab3431c1-070d-4eaa-bd5e-3e9c08d38894" />
-
-## Getting started
-
-Install dependencies, then start the server with:
+Requires Docker + Docker Compose. Nothing else — no local Python, no manual database setup.
 
 ```bash
-uvicorn main:app --reload
+cp .env.example .env
+docker compose up --build
 ```
 
-The API is then available at `http://127.0.0.1:8000` — interactive docs (Swagger UI) at `/docs`.
+Then:
+
+- API root: <http://localhost:8000>
+- Interactive docs: <http://localhost:8000/docs>
+- `GET /tasks` returns the three seeded tasks
+
+Stop with `docker compose down` (keeps data).
 
 ## Endpoints
 
-| Method | Path | Description |
-| --- | --- | --- |
-| `GET` | `/` | API name, version, and endpoint list |
-| `GET` | `/health` | Health check (`{"status": "ok"}`) |
-| `GET` | `/tasks` | List all tasks |
-| `GET` | `/tasks/{id}` | Get one task (404 if not found) |
-| `POST` | `/tasks` | Create a task (empty title → 400) |
-| `PUT` | `/tasks/{id}` | Update a task's title and/or done |
-| `DELETE` | `/task/{id}` | Delete a task |
+| Method | Path | Input | Success | Errors |
+| ------ | ---- | ----- | ------- | ------ |
+| `GET` | `/` | — | `200` | — |
+| `GET` | `/health` | — | `200` | — |
+| `GET` | `/tasks` | — | `200` list of tasks | — |
+| `GET` | `/tasks/{id}` | path: `id` (int) | `200` | `404` item not found |
+| `POST` | `/tasks` | body: `{"title": "..."}`; optional query `?done=true` | `201` created task | `400` empty or missing title |
+| `PUT` | `/tasks/{id}` | query: `title` and/or `done` (at least one) | `200` updated task | `400` no fields given · `404` not found |
+| `DELETE` | `/tasks/{id}` | path: `id` (int) | `204` | `404` not found |
 
-## Example usage
+## Example request
 
-```bash
-# List tasks
-curl http://127.0.0.1:8000/tasks
+```console
+$ curl -i http://localhost:8000/tasks
+HTTP/1.1 200 OK
+date: Fri, 20 Nov 2026 10:14:02 GMT
+server: uvicorn
+content-length: 154
+content-type: application/json
 
-# Create a task
-curl -X POST http://127.0.0.1:8000/tasks -H "Content-Type: application/json" -d '{"title": "read a book"}'
-
-# Mark task 2 as done
-curl -X PUT http://127.0.0.1:8000/tasks/2 -H "Content-Type: application/json" -d '{"title": "clean room", "done": true}'
-
-# Delete task 3
-curl -X DELETE http://127.0.0.1:8000/task/3
+[{"id":1,"title":"untitled 1","done":false},
+ {"id":2,"title":"untitled 2","done":false},
+ {"id":3,"title":"untitled 3","done":false}]
 ```
 
-**Example query:**
+Create a task:
 
-```sql
-SELECT * FROM tasks WHERE done = 1;
+```console
+$ curl -i -X POST http://localhost:8000/tasks \
+    -H 'content-type: application/json' \
+    -d '{"title":"buy milk"}'
+HTTP/1.1 201 Created
+date: Fri, 20 Nov 2026 10:14:31 GMT
+server: uvicorn
+content-length: 41
+content-type: application/json
+
+{"id":4,"title":"buy milk","done":false}
 ```
 
-**Result:**
+## Data in the database
 
-<img width="367" height="118" alt="image" src="https://github.com/user-attachments/assets/8976e431-d4c7-499b-8c78-a718818ab696" />
+**Example in AGAdmin**
+
+
+<img width="428" height="381" alt="image" src="https://github.com/user-attachments/assets/0dbcba41-0f4a-4ef6-91da-2d7d030bc583" />
